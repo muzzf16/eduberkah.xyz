@@ -1,0 +1,46 @@
+# ==============================================================================
+# EDUBERKAH.XYZ - APACHE HTACCESS CONFIGURATION (RUMAHWEB CPANEL)
+# ==============================================================================
+
+RewriteEngine On
+RewriteBase /
+
+# 1. Otomatis alihkan seluruh trafik ke HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Routing Endpoint API & Healthcheck ke Handler PHP
+RewriteRule ^api/config/?$ api/config.php [L,QSA]
+RewriteRule ^api/create-snap-token/?$ api/create-snap-token.php [L,QSA]
+RewriteRule ^api/midtrans-webhook/?$ api/midtrans-webhook.php [L,QSA]
+RewriteRule ^api/lead-magnet/?$ api/lead-magnet.php [L,QSA]
+RewriteRule ^api/download/([a-zA-Z0-9_\-]+)/?$ api/download.php?orderId=$1 [L,QSA]
+RewriteRule ^health/?$ api/health.php [L,QSA]
+RewriteRule ^api/health/?$ api/health.php [L,QSA]
+
+# 3. Proteksi Berkas Sensitif (Mencegah intip file konfigurasi, log, dan database)
+<FilesMatch "(\.env|\.sql|\.json|\.log|composer\.lock|package\.json|package-lock\.json)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 4. Standar Charset & Caching File Statis
+AddDefaultCharset UTF-8
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript application/json
+</IfModule>

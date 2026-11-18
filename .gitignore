@@ -1,0 +1,14 @@
+# Jangan upload file rahasia & data pelanggan ke GitHub
+.env
+orders_db.json
+leads_db.json
+*.sqlite
+*.sqlite3
+
+# Jangan upload folder produk jika ukurannya besar (opsional)
+# products_storage/
+
+# File sistem
+.DS_Store
+Thumbs.db
+error_log
